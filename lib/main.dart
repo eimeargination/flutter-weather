@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:weather_app/prefs/prefs.dart';
+import 'package:weather_app/app/prefs.dart';
 import 'package:weather_app/settings.dart';
 
 import 'api/api.dart';
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Weather',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
         useMaterial3: true,
@@ -72,17 +72,20 @@ class _MyHomePageState extends State<MyHomePage> {
                           const SettingsPage(title: 'Settings')),
                 );
               },
-              icon: const Icon(Icons.settings))
+              icon: const Icon(Icons.settings)),
+          IconButton(
+              onPressed: () {
+                refreshWeather();
+              },
+              icon: const Icon(Icons.refresh))
         ],
       ),
       body: Center(
           child: PrefsWidget(futurePreferences, (newPrefs) {
         return GetWeatherForecast(
-            futureWeather: futureForecast,
-            prefs: newPrefs,
-            onRefresh: () {
-              refreshWeather();
-            });
+          futureWeather: futureForecast,
+          prefs: newPrefs,
+        );
       })),
     );
   }

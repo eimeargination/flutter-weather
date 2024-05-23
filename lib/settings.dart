@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:weather_app/prefs/prefs.dart';
+import 'package:weather_app/app/prefs.dart';
 
 class SettingsPage extends StatefulWidget {
   final String title;
@@ -15,10 +15,16 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   var futurePreferences = SharedPreferences.getInstance();
 
-  void setTemp(SharedPreferences prefs, String newTemp) {
+  setTemp(SharedPreferences prefs, String newTemp) {
     setState(() {
       prefs.setTempUnits(newTemp);
+      futurePreferences = SharedPreferences.getInstance();
+    });
+  }
 
+  setShowExactUv(SharedPreferences prefs, bool newValue) {
+    setState(() {
+      prefs.setShowSpecificUV(newValue);
       futurePreferences = SharedPreferences.getInstance();
     });
   }
@@ -75,6 +81,21 @@ class _SettingsPageState extends State<SettingsPage> {
                     ],
                   ),
                 ),
+              ),
+              InkWell(
+                onTap: () {
+                  setShowExactUv(newPrefs, !newPrefs.getShowSpecificUv());
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        const Text('Show exact UV value'),
+                        const Spacer(),
+                        Text(newPrefs.getShowSpecificUv().toString())
+                      ],
+                    ),
+                )
               )
             ],
           );

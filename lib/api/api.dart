@@ -5,7 +5,7 @@ import 'package:weather_app/api/api-key.dart';
 import 'package:weather_app/api/weather.dart';
 
 Future<Forecast> getWeather() async {
-  const url = 'https://api.openweathermap.org/data/3.0/onecall?lat=55.005038&lon=-1.618434&exclude=minutely,daily,alerts&appid=$apiKey';
+  const url = 'https://api.openweathermap.org/data/3.0/onecall?lat=55.005038&lon=-1.618434&exclude=minutely,alerts&appid=$apiKey';
   final response =
   await http.get(Uri.parse(url));
 

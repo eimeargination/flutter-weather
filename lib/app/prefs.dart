@@ -2,18 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const tempKey = 'temp';
+const showExactUv = 'showExactUv';
+
 const kelvin = 'Kelvin';
 const celsius = 'Celsius';
 const fahrenheit = 'Fahrenheit';
 
 extension GetPreferences on SharedPreferences {
-  String getTempUnits() {
-    return getString(tempKey) ?? kelvin;
-  }
-
-  setTempUnits(newUnits) {
-    setString(tempKey, newUnits);
-  }
+  String getTempUnits() => getString(tempKey) ?? kelvin;
+  setTempUnits(newUnits) => setString(tempKey, newUnits);
 
   double convertTemp(double tempInK) {
     final localTempSetting = getTempUnits();
@@ -25,6 +22,20 @@ extension GetPreferences on SharedPreferences {
       return tempInK;
     }
   }
+
+  String degreesString() {
+    final localTempSetting = getTempUnits();
+    if (localTempSetting == celsius) {
+      return '°C';
+    } else if (localTempSetting == fahrenheit) {
+      return '°F';
+    } else {
+      return '°K';
+    }
+  }
+
+  bool getShowSpecificUv() => getBool(showExactUv) ?? false;
+  setShowSpecificUV(newValue) => setBool(showExactUv, newValue);
 }
 
 class PrefsWidget extends StatefulWidget {

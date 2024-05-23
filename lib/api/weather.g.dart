@@ -15,6 +15,9 @@ Forecast _$ForecastFromJson(Map<String, dynamic> json) => Forecast(
       (json['hourly'] as List<dynamic>)
           .map((e) => Detail.fromJson(e as Map<String, dynamic>))
           .toList(),
+      (json['daily'] as List<dynamic>)
+          .map((e) => Daily.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$ForecastToJson(Forecast instance) => <String, dynamic>{
@@ -24,6 +27,7 @@ Map<String, dynamic> _$ForecastToJson(Forecast instance) => <String, dynamic>{
       'timezone_offset': instance.timezoneOffset,
       'current': instance.current.toJson(),
       'hourly': instance.hourly.map((e) => e.toJson()).toList(),
+      'daily': instance.daily.map((e) => e.toJson()).toList(),
     };
 
 Detail _$DetailFromJson(Map<String, dynamic> json) => Detail(
@@ -74,4 +78,45 @@ Map<String, dynamic> _$WeatherToJson(Weather instance) => <String, dynamic>{
       'main': instance.main,
       'description': instance.description,
       'icon': instance.icon,
+    };
+
+Daily _$DailyFromJson(Map<String, dynamic> json) => Daily(
+      (json['dt'] as num).toInt(),
+      (json['sunrise'] as num).toInt(),
+      (json['sunset'] as num).toInt(),
+      (json['moonrise'] as num).toInt(),
+      (json['moonset'] as num).toInt(),
+      (json['moon_phase'] as num).toDouble(),
+      json['summary'] as String,
+      Temperature.fromJson(json['temp'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$DailyToJson(Daily instance) => <String, dynamic>{
+      'dt': instance.dt,
+      'sunrise': instance.sunrise,
+      'sunset': instance.sunset,
+      'moonrise': instance.moonrise,
+      'moonset': instance.moonset,
+      'moon_phase': instance.moonPhase,
+      'summary': instance.summary,
+      'temp': instance.temp,
+    };
+
+Temperature _$TemperatureFromJson(Map<String, dynamic> json) => Temperature(
+      (json['day'] as num).toDouble(),
+      (json['min'] as num).toDouble(),
+      (json['max'] as num).toDouble(),
+      (json['night'] as num).toDouble(),
+      (json['eve'] as num).toDouble(),
+      (json['morn'] as num).toDouble(),
+    );
+
+Map<String, dynamic> _$TemperatureToJson(Temperature instance) =>
+    <String, dynamic>{
+      'day': instance.day,
+      'min': instance.min,
+      'max': instance.max,
+      'night': instance.night,
+      'eve': instance.eve,
+      'morn': instance.morn,
     };
