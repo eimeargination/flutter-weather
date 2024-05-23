@@ -1,35 +1,34 @@
+import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'weather.g.dart';
 
 
-// To generate - run 'dart run build_runner build' in lib folder
-@JsonSerializable()
-class Weather {
+// To generate - run 'dart run build_runner build' in project root folder
+@JsonSerializable(explicitToJson: true)
+class Forecast {
   final double lat;
   final double lon;
   final String timezone;
   @JsonKey(name: 'timezone_offset')
   final int timezoneOffset;
-  final Current current;
+  final Detail current;
+  final List<Detail> hourly;
 
-  const Weather(
-      this.lat, this.lon, this.timezone, this.timezoneOffset, this.current);
+  const Forecast(this.lat, this.lon, this.timezone, this.timezoneOffset,
+      this.current, this.hourly);
 
-  /// Connect the generated [_$PersonFromJson] function to the `fromJson`
-  /// factory.
-  factory Weather.fromJson(Map<String, dynamic> json) =>
-      _$WeatherFromJson(json);
+  factory Forecast.fromJson(Map<String, dynamic> json) =>
+      _$ForecastFromJson(json);
 
-  /// Connect the generated [_$WeatherToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$WeatherToJson(this);
+  Map<String, dynamic> toJson() => _$ForecastToJson(this);
 }
 
-@JsonSerializable()
-class Current {
+@JsonSerializable(explicitToJson: true)
+class Detail {
   final int dt;
-  final int sunrise;
-  final int sunset;
+  final int? sunrise;
+  final int? sunset;
   final double temp;
   @JsonKey(name: 'feels_like')
   final double feelsLike;
@@ -44,28 +43,49 @@ class Current {
   final double windSpeed;
   @JsonKey(name: 'wind_deg')
   final int windDeg;
+  final List<Weather> weather;
 
-  const Current(
-    this.dt,
-    this.sunrise,
-    this.sunset,
-    this.temp,
-    this.feelsLike,
-    this.pressure,
-    this.humidity,
-    this.dewPoint,
-    this.uvi,
-    this.clouds,
-    this.visibility,
-    this.windSpeed,
-    this.windDeg,
-  );
+  const Detail(this.dt,
+      this.sunrise,
+      this.sunset,
+      this.temp,
+      this.feelsLike,
+      this.pressure,
+      this.humidity,
+      this.dewPoint,
+      this.uvi,
+      this.clouds,
+      this.visibility,
+      this.windSpeed,
+      this.windDeg,
+      this.weather);
 
-  /// Connect the generated [_$PersonFromJson] function to the `fromJson`
-  /// factory.
-  factory Current.fromJson(Map<String, dynamic> json) =>
-      _$CurrentFromJson(json);
+  String getHour() {
+    var date = DateTime.fromMillisecondsSinceEpoch(dt * 1000);
+    return DateFormat('HH:mm').format(date);
+  }
 
-  /// Connect the generated [_$WeatherToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$CurrentToJson(this);
+  factory Detail.fromJson(Map<String, dynamic> json) =>
+      _$DetailFromJson(json);
+
+  Map<String, dynamic> toJson() => _$DetailToJson(this);
+}
+
+@JsonSerializable()
+class Weather {
+  final int id;
+  final String main;
+  final String description;
+  final String icon;
+
+  String getIcon() {
+    return 'https://openweathermap.org/img/wn/$icon@2x.png';
+  }
+
+  const Weather(this.id, this.main, this.description, this.icon);
+
+  factory Weather.fromJson(Map<String, dynamic> json) =>
+      _$WeatherFromJson(json);
+
+  Map<String, dynamic> toJson() => _$WeatherToJson(this);
 }

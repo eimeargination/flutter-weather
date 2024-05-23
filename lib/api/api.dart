@@ -4,8 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:weather_app/api/api-key.dart';
 import 'package:weather_app/api/weather.dart';
 
-Future<Weather> getWeather() async {
-  const url = 'https://api.openweathermap.org/data/3.0/onecall?lat=55.005038&lon=-1.618434&exclude=minutely,hourly,daily,alerts&appid=$apiKey';
+Future<Forecast> getWeather() async {
+  const url = 'https://api.openweathermap.org/data/3.0/onecall?lat=55.005038&lon=-1.618434&exclude=minutely,daily,alerts&appid=$apiKey';
   final response =
   await http.get(Uri.parse(url));
 
@@ -13,7 +13,7 @@ Future<Weather> getWeather() async {
     // If the server did return a 200 OK response,
     // then parse the JSON.
     print(response.body);
-    return Weather.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+    return Forecast.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   } else {
     // If the server did not return a 200 OK response,
     // then throw an exception.
