@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weather_app/prefs/prefs.dart';
 import 'package:weather_app/settings.dart';
 
 import 'api/api.dart';
@@ -40,6 +41,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late Future<Weather> futureWeather;
+  final futurePreferences = SharedPreferences.getInstance();
 
   @override
   void initState() {
@@ -47,42 +49,84 @@ class _MyHomePageState extends State<MyHomePage> {
     futureWeather = getWeather();
   }
 
+  refreshWeather() {
+    setState(() {
+      futureWeather = getWeather();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme
+            .of(context)
+            .colorScheme
+            .inversePrimary,
         title: Text(widget.title),
         actions: [
-          IconButton(onPressed: () {
-            Navigator.push(
-              context,
-              CupertinoPageRoute(builder: (context) => const SettingsPage(title: 'Settings')),
-            );
-          }, icon: const Icon(Icons.settings))
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                      builder: (context) =>
+                      const SettingsPage(title: 'Settings')),
+                );
+              },
+              icon: const Icon(Icons.settings))
         ],
       ),
       body: Center(
-        child: FutureBuilder<Weather>(
-          future: futureWeather,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('${snapshot.data?.current.temp} degrees'),
-                  Text('${snapshot.data?.current.uvi} UV'),
-                ],
-              );
-            } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
-            }
+          child: PrefsWidget(futurePreferences, (newPrefs) {
+            return GetWeatherForecast(
+                futureWeather: futureWeather,
+                prefs: newPrefs,
+                onRefresh: () {
+                  refreshWeather();
+                }
+            );
+          })),
+    );
+  }
+}
 
-            // By default, show a loading spinner.
-            return const CircularProgressIndicator();
-          },
-        ),
-      ),
+class GetWeatherForecast extends StatelessWidget {
+  const GetWeatherForecast({super.key,
+    required this.futureWeather,
+    required this.prefs,
+    required this.onRefresh});
+
+  final Future<Weather> futureWeather;
+  final SharedPreferences prefs;
+  final Function onRefresh;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Weather>(
+      future: futureWeather,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('${prefs.convertTemp(snapshot.data!.current.temp)} degrees'),
+              Text('${snapshot.data?.current.uvi} UV'),
+              MaterialButton(
+                onPressed: () {
+                  onRefresh();
+                },
+                child: const Text("Refresh weather"),
+              )
+            ],
+          );
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+
+        // By default, show a loading spinner.
+        return const CircularProgressIndicator();
+      },
     );
   }
 }
