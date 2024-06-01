@@ -47,7 +47,7 @@ class GetWeatherForecast extends StatelessWidget {
                     style: TextStyle(fontFamily: 'Merriweather')),
               ),
               SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.5,
+                  height: MediaQuery.of(context).size.height * 0.2,
                   child: ListView.builder(
                     padding: const EdgeInsets.only(left: 8, right: 8),
                     scrollDirection: Axis.horizontal,
@@ -55,6 +55,17 @@ class GetWeatherForecast extends StatelessWidget {
                     itemBuilder: (context, index) {
                       return HourPreview(
                           prefs: prefs, preview: snapshot.data!.hourly[index]);
+                    },
+                  )),
+              SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.2,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.only(left: 8, right: 8),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: snapshot.data!.daily.length,
+                    itemBuilder: (context, index) {
+                      return DayPreview(
+                          prefs: prefs, preview: snapshot.data!.daily[index]);
                     },
                   )),
               const Center(
@@ -218,6 +229,45 @@ class HourPreview extends StatelessWidget {
                                     : Colors.white)),
                   ],
                 )
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class DayPreview extends StatelessWidget {
+  const DayPreview({super.key, required this.prefs, required this.preview});
+
+  final SharedPreferences prefs;
+  final Daily preview;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Card(
+          //color: preview.previewColour(),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  preview.getDate(),
+                  style: const TextStyle(
+                      fontFamily: 'Merriweather'),
+                ),
+                Image.network(
+                  preview.weather[0].getIcon(),
+                  width: 48,
+                ),
+                Text(
+                  '${prefs.convertTemp(preview.temp.day).round()}°',
+                ),
               ],
             ),
           ),

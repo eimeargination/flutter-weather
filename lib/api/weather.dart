@@ -134,9 +134,15 @@ class Daily {
   final double moonPhase;
   final String summary;
   final Temperature temp;
+  final List<Weather> weather;
 
   const Daily(this.dt, this.sunrise, this.sunset, this.moonrise, this.moonset,
-      this.moonPhase, this.summary, this.temp);
+      this.moonPhase, this.summary, this.temp, this.weather);
+
+  String getDate() {
+    var date = DateTime.fromMillisecondsSinceEpoch(dt * 1000);
+    return DateFormat('dd/MM').format(date);
+  }
 
   factory Daily.fromJson(Map<String, dynamic> json) => _$DailyFromJson(json);
 

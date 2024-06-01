@@ -91,6 +91,9 @@ Daily _$DailyFromJson(Map<String, dynamic> json) => Daily(
       (json['moon_phase'] as num).toDouble(),
       json['summary'] as String,
       Temperature.fromJson(json['temp'] as Map<String, dynamic>),
+      (json['weather'] as List<dynamic>)
+          .map((e) => Weather.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$DailyToJson(Daily instance) => <String, dynamic>{
@@ -102,6 +105,7 @@ Map<String, dynamic> _$DailyToJson(Daily instance) => <String, dynamic>{
       'moon_phase': instance.moonPhase,
       'summary': instance.summary,
       'temp': instance.temp,
+      'weather': instance.weather,
     };
 
 Temperature _$TemperatureFromJson(Map<String, dynamic> json) => Temperature(
