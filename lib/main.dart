@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
         useMaterial3: true,
+        fontFamily: 'Quicksand',
       ),
       home: const MyHomePage(title: 'Weather app'),
     );
@@ -61,7 +62,10 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: Text(
+          widget.title,
+          style: const TextStyle(fontFamily: 'Merriweather'),
+        ),
         actions: [
           IconButton(
               onPressed: () {

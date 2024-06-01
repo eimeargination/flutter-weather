@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weather_app/app/prefs.dart';
+import 'package:weather_app/hourly_detail.dart';
 
 import 'api/weather.dart';
 import 'app/uv_index.dart';
@@ -26,15 +29,22 @@ class GetWeatherForecast extends StatelessWidget {
               const Spacer(),
               CurrentWeather(prefs: prefs, current: snapshot.data!.current),
               const Spacer(),
-              const Padding(
-                padding: EdgeInsets.only(left: 16, right: 16),
-                child: Text('Today:'),
+              Padding(
+                padding: const EdgeInsets.only(left: 16, right: 16),
+                child: Text(
+                  'Weather for ${DateFormat('EEEE d MMMM').format(DateTime.now())}',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineSmall
+                      ?.copyWith(fontFamily: 'Merriweather'),
+                ),
               ),
               DailyPreview(prefs: prefs, daily: snapshot.data!.daily.first),
               const Spacer(),
               const Padding(
                 padding: EdgeInsets.only(left: 16, right: 16),
-                child: Text('Hourly forecast:'),
+                child: Text('Hourly forecast:',
+                    style: TextStyle(fontFamily: 'Merriweather')),
               ),
               SizedBox(
                   height: MediaQuery.of(context).size.height * 0.5,
@@ -47,6 +57,9 @@ class GetWeatherForecast extends StatelessWidget {
                           prefs: prefs, preview: snapshot.data!.hourly[index]);
                     },
                   )),
+              const Center(
+                  child: Text('Powered by OpenWeather',
+                      textAlign: TextAlign.center)),
             ],
           );
         } else if (snapshot.hasError) {
@@ -87,7 +100,10 @@ class CurrentWeather extends StatelessWidget {
                   children: [
                     Text(
                       '${prefs.convertTemp(current.temp).round()}${prefs.degreesString()}',
-                      style: Theme.of(context).textTheme.headlineMedium,
+                      style: Theme.of(context)
+                          .textTheme
+                          .displayMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     UVIndex(
                       uvi: current.uvi,
@@ -115,10 +131,12 @@ class DailyPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.only(left: 16, right: 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(daily.summary),
           Row(
             children: [
               const Icon(Icons.arrow_upward),
@@ -157,7 +175,18 @@ class HourPreview extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.network(preview.weather[0].getIcon()),
+                Text(
+                  preview.getHour(),
+                  style: TextStyle(
+                      color: preview.previewColour().computeLuminance() > 0.5
+                          ? Colors.black
+                          : Colors.white,
+                      fontFamily: 'Merriweather'),
+                ),
+                Image.network(
+                  preview.weather[0].getIcon(),
+                  width: 48,
+                ),
                 Text(
                   '${prefs.convertTemp(preview.temp).round()}°',
                   style: TextStyle(
@@ -169,12 +198,25 @@ class HourPreview extends StatelessWidget {
                   uvi: preview.uvi,
                   prefs: prefs,
                 ),
-                Text(
-                  preview.getHour(),
-                  style: TextStyle(
-                      color: preview.previewColour().computeLuminance() > 0.5
-                          ? Colors.black
-                          : Colors.white),
+                Row(
+                  children: [
+                    Icon(CupertinoIcons.cloud_rain,
+                        size: 16,
+                        color:
+                            preview.previewColour().computeLuminance() > 0.5
+                                ? Colors.black
+                                : Colors.white),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    Text(preview.getPopPercent() ?? '',
+                        style: TextStyle(
+                            color:
+                                preview.previewColour().computeLuminance() >
+                                        0.5
+                                    ? Colors.black
+                                    : Colors.white)),
+                  ],
                 )
               ],
             ),

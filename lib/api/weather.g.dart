@@ -44,6 +44,7 @@ Detail _$DetailFromJson(Map<String, dynamic> json) => Detail(
       (json['visibility'] as num).toInt(),
       (json['wind_speed'] as num).toDouble(),
       (json['wind_deg'] as num).toInt(),
+      (json['pop'] as num?)?.toDouble(),
       (json['weather'] as List<dynamic>)
           .map((e) => Weather.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -63,6 +64,7 @@ Map<String, dynamic> _$DetailToJson(Detail instance) => <String, dynamic>{
       'visibility': instance.visibility,
       'wind_speed': instance.windSpeed,
       'wind_deg': instance.windDeg,
+      'pop': instance.pop,
       'weather': instance.weather.map((e) => e.toJson()).toList(),
     };
 

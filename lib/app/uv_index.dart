@@ -53,7 +53,7 @@ extension GetUVData on double {
     if (prefs.getShowSpecificUv()) {
       return toString();
     } else {
-      return round().toString();
+      return toInt().toString();
     }
   }
 }

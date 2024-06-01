@@ -44,6 +44,7 @@ class Detail {
   final double windSpeed;
   @JsonKey(name: 'wind_deg')
   final int windDeg;
+  final double? pop;
   final List<Weather> weather;
 
   const Detail(
@@ -60,11 +61,20 @@ class Detail {
       this.visibility,
       this.windSpeed,
       this.windDeg,
+      this.pop,
       this.weather);
 
   String getHour() {
     var date = DateTime.fromMillisecondsSinceEpoch(dt * 1000);
     return DateFormat('HH:mm').format(date);
+  }
+
+  String? getPopPercent() {
+    if (pop == null) {
+      return null;
+    } else {
+      return '${(pop! * 100).round()}%';
+    }
   }
 
   Color previewColour() {

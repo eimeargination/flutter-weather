@@ -34,7 +34,8 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(widget.title),
+          title: Text(widget.title,
+              style: const TextStyle(fontFamily: 'Merriweather')),
         ),
         body: PrefsWidget(futurePreferences, (newPrefs) {
           return Column(
@@ -77,26 +78,32 @@ class _SettingsPageState extends State<SettingsPage> {
                     children: [
                       const Text('Temperature units'),
                       const Spacer(),
-                      Text(newPrefs.getTempUnits())
+                      Text(
+                        newPrefs.getTempUnits(),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      )
                     ],
                   ),
                 ),
               ),
               InkWell(
-                onTap: () {
-                  setShowExactUv(newPrefs, !newPrefs.getShowSpecificUv());
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  onTap: () {
+                    setShowExactUv(newPrefs, !newPrefs.getShowSpecificUv());
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
                     child: Row(
                       children: [
-                        const Text('Show exact UV value'),
+                        const Text('UV Index precision'),
                         const Spacer(),
-                        Text(newPrefs.getShowSpecificUv().toString())
+                        Text(
+                            newPrefs.getShowSpecificUv()
+                                ? 'Exact'
+                                : 'Whole number',
+                            style: const TextStyle(fontWeight: FontWeight.bold))
                       ],
                     ),
-                )
-              )
+                  ))
             ],
           );
         }));
